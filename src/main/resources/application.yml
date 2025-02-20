@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/picpay  # PostgreSQL database connection URL
+    username: postgres  # Database username
+    password: atircio  # Database password (Avoid storing plaintext passwords in production!)
+    driver-class-name: org.postgresql.Driver  # JDBC driver for PostgreSQL
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # Automatically creates the database schema on startup (use 'update' to avoid data loss)
+    show-sql: true  # Enables logging of SQL queries in the console
+    properties:
+      hibernate:
+        format_sql: true  # Helps format SQL queries for better readability in logs
+    database: postgresql  # Specifies PostgreSQL as the database type
+    database-platform: org.hibernate.dialect.PostgreSQLDialect  # Defines the correct Hibernate dialect for PostgreSQL
