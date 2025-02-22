@@ -22,7 +22,7 @@ public class User {
     private String email;
     private String password;
     @Column(nullable = false, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
-    private BigDecimal balance;
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     private UserType userType;

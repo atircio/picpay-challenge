@@ -69,8 +69,9 @@ public class Notification {
         return sentDate;
     }
 
-    public void setSentDate(LocalDateTime sentDate) {
-        this.sentDate = sentDate;
+    @PrePersist
+    public void onPrePersist() {
+        this.sentDate = LocalDateTime.now();
     }
 
     @Override

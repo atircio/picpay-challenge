@@ -68,8 +68,9 @@ public class Transaction {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    @PrePersist
+    public void onPrePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 
     public User getReceiver() {
