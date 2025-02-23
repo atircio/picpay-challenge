@@ -22,8 +22,6 @@ public class UserDto {
     @NotBlank(message = "Password is required")
     private String password;
 
-    @NotNull(message = "Balance cannot be null")
-    private BigDecimal balance;
 
     @NotNull(message = "User type is required")
     private UserType userType;
@@ -31,12 +29,11 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String fullName, String CPF, String email, String password, BigDecimal balance, UserType userType) {
+    public UserDto(String fullName, String CPF, String email, String password, UserType userType) {
         this.fullName = fullName;
         this.CPF = CPF;
         this.email = email;
         this.password = password;
-        this.balance = balance;
         this.userType = userType;
     }
 
@@ -72,14 +69,6 @@ public class UserDto {
         this.password = password;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
     public UserType getUserType() {
         return userType;
     }
@@ -95,7 +84,6 @@ public class UserDto {
                 ", CPF='" + CPF + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", balance=" + balance +
                 ", userType=" + userType +
                 '}';
     }

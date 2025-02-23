@@ -5,6 +5,7 @@ import com.atircio.pickpay.entities.enums.UserType;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,9 +19,9 @@ public class UserDtoResponse {
 
     private UserType userType;
 
-    private List<Transaction> SentTransactions;
+    private List<TransactionForUsersDto> SentTransactions = new ArrayList<>();
 
-    private List<Transaction> ReceivedTransactions;
+    private List<TransactionForUsersDto> ReceivedTransactions = new ArrayList<>();
 
     public String getFullName() {
         return fullName;
@@ -62,19 +63,19 @@ public class UserDtoResponse {
         this.userType = userType;
     }
 
-    public List<Transaction> getSentTransactions() {
+    public List<TransactionForUsersDto> getSentTransactions() {
         return SentTransactions;
     }
 
-    public void setSentTransactions(List<Transaction> sentTransactions) {
+    public void setSentTransactions(List<TransactionForUsersDto> sentTransactions) {
         SentTransactions = sentTransactions;
     }
 
-    public List<Transaction> getReceivedTransactions() {
+    public List<TransactionForUsersDto> getReceivedTransactions() {
         return ReceivedTransactions;
     }
 
-    public void setReceivedTransactions(List<Transaction> receivedTransactions) {
+    public void setReceivedTransactions(List<TransactionForUsersDto> receivedTransactions) {
         ReceivedTransactions = receivedTransactions;
     }
 }

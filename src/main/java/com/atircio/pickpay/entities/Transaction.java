@@ -4,6 +4,7 @@ import com.atircio.pickpay.entities.enums.TransactionStatus;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
 public class Transaction {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false, columnDefinition = "DECIMAL(10,2)")
@@ -21,7 +22,10 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
 
-    @Column( updatable = false)
+    @Column(nullable = false, unique = true, updatable = false)
+    private String reference;
+
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
@@ -35,25 +39,15 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Integer id, BigDecimal amount, TransactionStatus status, LocalDateTime createdAt, User sender, User receiver) {
-        this.id = id;
+    public Transaction(BigDecimal amount, TransactionStatus status, User sender, User receiver) {
         this.amount = amount;
         this.status = status;
-        this.createdAt = createdAt;
         this.sender = sender;
         this.receiver = receiver;
     }
 
     public Integer getId() {
         return id;
-    }
-
-    public TransactionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TransactionStatus status) {
-        this.status = status;
     }
 
     public BigDecimal getAmount() {
@@ -64,21 +58,20 @@ public class Transaction {
         this.amount = amount;
     }
 
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    @PrePersist
-    public void onPrePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
     }
 
     public User getSender() {
@@ -89,27 +82,50 @@ public class Transaction {
         this.sender = sender;
     }
 
+    public User getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
+    }
+
+    @PrePersist
+    public void onPrePersist() {
+        this.createdAt = LocalDateTime.now();
+        SecureRandom random = new SecureRandom();
+        int uniqueNumber = 10000000 + random.nextInt(90000000); // Generates an 8-digit unique number
+        this.reference = createdAt.getYear() + String.valueOf(uniqueNumber);
+    }
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return Objects.equals(id, that.id) && Objects.equals(amount, that.amount) && Objects.equals(createdAt, that.createdAt) && Objects.equals(sender, that.sender) && Objects.equals(receiver, that.receiver);
+        return Objects.equals(id, that.id) &&
+                Objects.equals(amount, that.amount) &&
+                Objects.equals(createdAt, that.createdAt) &&
+                Objects.equals(reference, that.reference) &&
+                Objects.equals(sender, that.sender) &&
+                Objects.equals(receiver, that.receiver);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, amount, createdAt, sender, receiver);
+        return Objects.hash(id, amount, createdAt, reference, sender, receiver);
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
-                "amount=" + amount +
+                "id=" + id +
+                ", amount=" + amount +
                 ", status=" + status +
+                ", reference='" + reference + '\'' +
                 ", createdAt=" + createdAt +
                 ", sender=" + sender +
                 ", receiver=" + receiver +
-                ", id=" + id +
                 '}';
     }
 }
