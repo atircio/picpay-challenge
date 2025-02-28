@@ -4,6 +4,7 @@ import com.atircio.pickpay.dtos.UserDto;
 import com.atircio.pickpay.dtos.UserDtoResponse;
 import com.atircio.pickpay.services.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class UserResource {
     }
 
     @PostMapping
-    public ResponseEntity<UserDtoResponse> save(@RequestBody UserDto dto){
+    public ResponseEntity<UserDtoResponse> save(@Validated @RequestBody UserDto dto){
         UserDtoResponse dtoResponse = userService.saveUser(dto);
         return ResponseEntity.ok().body(dtoResponse);
     }
@@ -28,5 +29,17 @@ public class UserResource {
     public ResponseEntity<List<UserDtoResponse>> findAllUsers(){
         List<UserDtoResponse> Users = userService.findAllUsers();
         return ResponseEntity.ok(Users);
+    }
+
+    @GetMapping("/findUserByCpf/{cpf}")
+    public ResponseEntity<UserDtoResponse> findByCpf(@PathVariable String cpf){
+        UserDtoResponse dtoResponse = userService.findUserByCpf(cpf);
+        return ResponseEntity.ok().body(dtoResponse);
+    }
+
+    @GetMapping("/findUserByEmail/{email}")
+    public ResponseEntity<UserDtoResponse> findByEmail(@PathVariable String email){
+        UserDtoResponse dtoResponse = userService.findUserByEmail(email);
+        return ResponseEntity.ok().body(dtoResponse);
     }
 }

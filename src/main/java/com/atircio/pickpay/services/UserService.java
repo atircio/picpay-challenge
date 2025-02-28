@@ -14,7 +14,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
@@ -24,9 +23,21 @@ public class UserService {
         return userMapper.userToUserDtoResponse(userRepository.save(userMapper.userDtoToUser(dto)));
     }
 
-
-
     public List<UserDtoResponse> findAllUsers() {
-        return null;
+        return userMapper.userToUserDtoResponse(userRepository.findAll());
+    }
+
+    public UserDtoResponse findUserByCpf(String cpf) {
+        return userMapper.userToUserDtoResponse(
+                userRepository.findByCPF(cpf)
+                        .orElseThrow(() -> new RuntimeException("User not found"))
+        );
+    }
+
+    public UserDtoResponse findUserByEmail(String email) {
+        return userMapper.userToUserDtoResponse(
+                userRepository.findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("User not found"))
+        );
     }
 }

@@ -3,24 +3,34 @@ package com.atircio.pickpay.mappers;
 import com.atircio.pickpay.dtos.UserDto;
 import com.atircio.pickpay.dtos.UserDtoResponse;
 import com.atircio.pickpay.entities.User;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+@Component
 public class UserMapper {
+
+    private final TransactionMapper transactionMapper;
+
+    public UserMapper(TransactionMapper transactionMapper) {
+        this.transactionMapper = transactionMapper;
+    }
 
     public User userDtoToUser(UserDto dto){
 
         User entity = new User();
-        entity.setFullName(dto.getFullName());
-        entity.setCPF(dto.getCPF());
-        entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword());
-        entity.setUserType(dto.getUserType());
+        entity.setFullName(dto.fullName());
+        entity.setCPF(dto.CPF());
+        entity.setEmail(dto.email());
+        entity.setPassword(dto.password());
+        entity.setUserType(dto.userType());
 
         return entity;
     }
 
-    public UserDtoResponse userToUserDtoResponse(User entity){
+    public UserDtoResponse userToUserDtoResponse(User entity) {
         UserDtoResponse dto = new UserDtoResponse();
 
         dto.setFullName(entity.getFullName());
@@ -28,9 +38,24 @@ public class UserMapper {
         dto.setCPF(entity.getCPF());
         dto.setBalance(entity.getBalance());
         dto.setUserType(entity.getUserType());
-        dto.setReceivedTransactions(entity.getReceivedTransactions());
-        dto.setSentTransactions(entity.getSentTransactions());
 
+        dto.setReceivedTransactions(Optional.ofNullable(entity.getReceivedTransactions())
+                .map(transactions -> transactions.stream()
+                        .map(transactionMapper::transactionToTransactionForUsersDto)
+                        .toList())
+                .orElse(List.of())); // Return an empty list if null
+
+
+        dto.setSentTransactions(entity.getSentTransactions() != null
+                ? entity.getSentTransactions().stream()
+                .map(transactionMapper::transactionToTransactionForUsersDto)
+                .toList()
+                : Collections.emptyList());
         return dto;
+
+    }
+
+    public List<UserDtoResponse> userToUserDtoResponse(List<User> users) {
+       return users.stream().map(this::userToUserDtoResponse).toList();
     }
 }
