@@ -4,6 +4,7 @@ import com.atircio.pickpay.dtos.UserDto;
 import com.atircio.pickpay.dtos.UserDtoResponse;
 import com.atircio.pickpay.mappers.UserMapper;
 import com.atircio.pickpay.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,14 +31,14 @@ public class UserService {
     public UserDtoResponse findUserByCpf(String cpf) {
         return userMapper.userToUserDtoResponse(
                 userRepository.findByCPF(cpf)
-                        .orElseThrow(() -> new RuntimeException("User not found"))
+                        .orElseThrow(() -> new EntityNotFoundException("User not found with CPF: " + cpf ))
         );
     }
 
     public UserDtoResponse findUserByEmail(String email) {
         return userMapper.userToUserDtoResponse(
                 userRepository.findByEmail(email)
-                        .orElseThrow(() -> new RuntimeException("User not found"))
+                        .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email))
         );
     }
 }
