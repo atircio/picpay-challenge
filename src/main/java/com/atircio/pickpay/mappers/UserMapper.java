@@ -1,61 +1,50 @@
 package com.atircio.pickpay.mappers;
 
+import com.atircio.pickpay.dtos.TransactionForUsersDto;
 import com.atircio.pickpay.dtos.UserDto;
 import com.atircio.pickpay.dtos.UserDtoResponse;
+import com.atircio.pickpay.dtos.UserTransactionInfoResponse;
+import com.atircio.pickpay.entities.Transaction;
 import com.atircio.pickpay.entities.User;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
 
-    private final TransactionMapper transactionMapper;
-
-    public UserMapper(TransactionMapper transactionMapper) {
-        this.transactionMapper = transactionMapper;
-    }
-
-    public User userDtoToUser(UserDto dto){
-
-        User entity = new User();
-        entity.setFullName(dto.fullName());
-        entity.setCPF(dto.CPF());
-        entity.setEmail(dto.email());
-        entity.setPassword(dto.password());
-        entity.setUserType(dto.userType());
-
-        return entity;
+    public User userDtoToUser(UserDto dto) {
+        return new User(dto.fullName(), dto.CPF(), dto.email(), dto.password(), dto.userType());
     }
 
     public UserDtoResponse userToUserDtoResponse(User entity) {
-        UserDtoResponse dto = new UserDtoResponse();
-
-        dto.setFullName(entity.getFullName());
-        dto.setEmail(entity.getEmail());
-        dto.setCPF(entity.getCPF());
-        dto.setBalance(entity.getBalance());
-        dto.setUserType(entity.getUserType());
-
-        dto.setReceivedTransactions(Optional.ofNullable(entity.getReceivedTransactions())
-                .map(transactions -> transactions.stream()
-                        .map(transactionMapper::transactionToTransactionForUsersDto)
-                        .toList())
-                .orElse(List.of())); // Return an empty list if null
-
-
-        dto.setSentTransactions(entity.getSentTransactions() != null
-                ? entity.getSentTransactions().stream()
-                .map(transactionMapper::transactionToTransactionForUsersDto)
-                .toList()
-                : Collections.emptyList());
-        return dto;
-
+        return new UserDtoResponse(
+                entity.getFullName(),
+                entity.getEmail(),
+                entity.getCPF(),
+                entity.getBalance(),
+                entity.getUserType(),
+                mapTransactions(entity.getReceivedTransactions()),
+                mapTransactions(entity.getSentTransactions())
+        );
     }
 
     public List<UserDtoResponse> userToUserDtoResponse(List<User> users) {
-       return users.stream().map(this::userToUserDtoResponse).toList();
+        return users.stream()
+                .map(this::userToUserDtoResponse)
+                .collect(Collectors.toList());
+    }
+
+    public UserTransactionInfoResponse userToUserTransactionInfoResponse(User entity) {
+        return new UserTransactionInfoResponse(entity.getFullName(), entity.getCPF());
+    }
+
+    private List<TransactionForUsersDto> mapTransactions(List<Transaction> transactions) {
+        return transactions != null
+                ? transactions.stream()
+                .map(TransactionMapper::transactionToTransactionForUsersDto)
+                .collect(Collectors.toList())
+                : List.of();
     }
 }

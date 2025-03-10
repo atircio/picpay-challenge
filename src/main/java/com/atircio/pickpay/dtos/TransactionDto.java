@@ -12,7 +12,7 @@ public record TransactionDto(
 
         UserTransactionInfoResponse receiver,
 
-         BigDecimal amount,
+        BigDecimal amount,
 
         String reference,
 

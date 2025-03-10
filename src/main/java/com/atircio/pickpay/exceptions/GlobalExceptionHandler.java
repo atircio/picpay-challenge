@@ -37,5 +37,21 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), "Validation failed", errors));
     }
 
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<ErrorResponseDto>  handleInsufficientBalanceException(InsufficientBalanceException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).
+                body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
+    }
+    @ExceptionHandler(TransactionFailedException.class)
+    public ResponseEntity<ErrorResponseDto>  handleTransactionFailedException(TransactionFailedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).
+                body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
+    }
+    @ExceptionHandler(UnauthorizedTransactionException.class)
+    public ResponseEntity<ErrorResponseDto>  handleUnauthorizedTransactionException(UnauthorizedTransactionException exception){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).
+                body(new ErrorResponseDto(HttpStatus.UNAUTHORIZED.value(), exception.getMessage()));
+    }
+
 
 }
