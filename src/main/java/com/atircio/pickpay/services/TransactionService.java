@@ -5,6 +5,7 @@ import com.atircio.pickpay.dtos.TransferMoneyRequestDto;
 import com.atircio.pickpay.entities.Transaction;
 import com.atircio.pickpay.entities.User;
 import com.atircio.pickpay.entities.enums.TransactionStatus;
+import com.atircio.pickpay.entities.enums.UserType;
 import com.atircio.pickpay.exceptions.InsufficientBalanceException;
 import com.atircio.pickpay.exceptions.TransactionFailedException;
 import com.atircio.pickpay.exceptions.UnauthorizedTransactionException;
@@ -36,8 +37,16 @@ public class TransactionService {
 
     @Transactional
     public TransactionDto sendMoney(TransferMoneyRequestDto requestDto, String senderCpf) {
+
+        if(requestDto.cpfDestination().equals(senderCpf)){
+            throw new UnauthorizedTransactionException("The sender and receiver cannot have the same cpf");
+        }
+
         User sender = userRepository.findByCPF(senderCpf).orElseThrow(
                 () -> new EntityNotFoundException("Sender user not found with CPF: " + senderCpf));
+
+        if(sender.getUserType().equals(UserType.MERCHANT))
+            throw new IllegalArgumentException("Merchants are not allowed to send money, only receive");
 
         User receiver = userRepository.findByCPF(requestDto.cpfDestination()).orElseThrow(
                 () -> new EntityNotFoundException("Receiver user not found with CPF: " + requestDto.cpfDestination()));
