@@ -22,6 +22,9 @@ public record UserDto(
     @NotBlank(message = "Password is required")
      String password,
 
+    @Positive
+    BigDecimal balance,
+
 
     @NotNull(message = "User type is required")
      UserType userType

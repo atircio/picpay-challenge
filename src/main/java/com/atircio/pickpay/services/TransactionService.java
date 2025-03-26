@@ -14,9 +14,11 @@ import com.atircio.pickpay.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;

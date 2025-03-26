@@ -22,7 +22,7 @@ public class TransactionResource {
 
     @PostMapping("/transferMoneyByCpf")
     public ResponseEntity<TransactionDto> sendMoney(
-            @Valid @RequestBody TransferMoneyRequestDto requestDto,
+             @RequestBody TransferMoneyRequestDto requestDto,
             @RequestHeader("X-Sender-CPF") String senderCpf){
         TransactionDto transaction = transactionService.sendMoney(requestDto, senderCpf);
 

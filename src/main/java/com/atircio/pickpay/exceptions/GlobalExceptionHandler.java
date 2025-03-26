@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
@@ -42,6 +43,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).
                 body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto>  handleInsufficientBalanceException(IllegalArgumentException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).
+                body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), exception.getMessage()));
+    }
+
     @ExceptionHandler(TransactionFailedException.class)
     public ResponseEntity<ErrorResponseDto>  handleTransactionFailedException(TransactionFailedException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).
@@ -51,6 +59,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto>  handleUnauthorizedTransactionException(UnauthorizedTransactionException exception){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).
                 body(new ErrorResponseDto(HttpStatus.UNAUTHORIZED.value(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    //@ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorResponseDto> handleDuplicateEmailException(DuplicateEmailException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponseDto(HttpStatus.CONFLICT.value(), ex.getMessage()));
     }
 
 

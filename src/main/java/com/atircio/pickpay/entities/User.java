@@ -21,7 +21,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    @Column(nullable = false, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
+    @Column(nullable = false, columnDefinition = "DECIMAL(10,2)")
     private BigDecimal balance = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
