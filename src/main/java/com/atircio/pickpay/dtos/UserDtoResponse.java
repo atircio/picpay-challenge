@@ -12,7 +12,7 @@ import java.util.List;
 public class UserDtoResponse {
 
     private String fullName;
-    private String CPF;
+    private String cpf;
 
     private String email;
     private BigDecimal balance;
@@ -32,11 +32,11 @@ public class UserDtoResponse {
     }
 
     public String getCPF() {
-        return CPF;
+        return cpf;
     }
 
-    public void setCPF(String CPF) {
-        this.CPF = CPF;
+    public void setCPF(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getEmail() {
