@@ -2,7 +2,7 @@
   <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTN4Z2wwcHE1czl5MXEybHNzbmx0eTd5bTQzbWs3c2kzazBuN2JmcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qgQUggAC3Pfv687qPC/giphy.gif" width="400" alt="Banner"/>
 </p>
 
-<h1 align="center">💸 PickPay Challenge - Java + Spring Boot</h1>
+<h1 align="center">💸 PicPay Challenge - Java + Spring Boot</h1>
 
 <p align="center">
   A modern digital wallet system for secure and fast money transfers.
@@ -52,8 +52,8 @@
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/pickpay.git
-cd pickpay
+git clone https://github.com/your-username/Picpay.git
+cd Picpay
 
 # Run the application
 ./mvnw spring-boot:run
@@ -88,7 +88,7 @@ cd pickpay
 ## 🧠 Architecture Overview
 
 ```
-com.atircio.pickpay
+com.atircio.Picpay
 │
 ├── controllers        # REST endpoints
 ├── dtos               # Data Transfer Objects
@@ -145,7 +145,7 @@ Pull requests are welcome! Please fork the repo and open a PR for any features o
 
 ## 📃 License
 
-This project is just a public challenge by the company PickPay. You can view more details about the challenge at [https://github.com/PicPay/picpay-desafio-backend](https://github.com/PicPay/picpay-desafio-backend).
+This project is just a public challenge by the company PicPay. You can view more details about the challenge at [https://github.com/PicPay/Picpay-desafio-backend](https://github.com/PicPay/Picpay-desafio-backend).
 
 ---
 
