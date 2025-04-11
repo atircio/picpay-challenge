@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTU0YjkwY2MzNjMwZDRkYjhlY2RjNTg5ZjE1MzE4ZDg0ZGIxNWI3MSZjdD1n/N5W3zINkG91BPK0wL0/giphy.gif" width="600" alt="Banner"/>
+  <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTN4Z2wwcHE1czl5MXEybHNzbmx0eTd5bTQzbWs3c2kzazBuN2JmcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qgQUggAC3Pfv687qPC/giphy.gif" width="600" alt="Banner"/>
 </p>
 
 <h1 align="center">💸 PickPay Challenge - Java + Spring Boot</h1>
@@ -138,7 +138,7 @@ Pull requests are welcome! Please fork the repo and open a PR for any features o
 
 ## 📬 Contact
 
-📧 **Email:** [atircio@example.com](mailto\:atircio@example.com)\
+📧 **Email:** [atircio@example.com](mailto\:atmatias12@gmail.com)\
 📚 **Built by:** Atircio Matias
 
 ---
