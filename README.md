@@ -138,7 +138,7 @@ Pull requests are welcome! Please fork the repo and open a PR for any features o
 
 ## 📬 Contact
 
-📧 **Email:** [atircio@example.com](mailto\:atmatias12@gmail.com)\
+📧 **Email:** [atmatias12@gmail.com](mailto\:atmatias12@gmail.com)\
 📚 **Built by:** Atircio Matias
 
 ---
