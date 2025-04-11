@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTN4Z2wwcHE1czl5MXEybHNzbmx0eTd5bTQzbWs3c2kzazBuN2JmcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qgQUggAC3Pfv687qPC/giphy.gif" width="600" alt="Banner"/>
+  <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTN4Z2wwcHE1czl5MXEybHNzbmx0eTd5bTQzbWs3c2kzazBuN2JmcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qgQUggAC3Pfv687qPC/giphy.gif" width="400" alt="Banner"/>
 </p>
 
 <h1 align="center">💸 PickPay Challenge - Java + Spring Boot</h1>
