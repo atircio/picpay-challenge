@@ -45,9 +45,10 @@ public class User {
         this.password = password;
         this.balance = balance;
         this.userType = userType;
-        SentTransactions = sentTransactions;
-        ReceivedTransactions = receivedTransactions;
+        this.SentTransactions = sentTransactions;
+        this.ReceivedTransactions = receivedTransactions;
     }
+
 
     public String getFullName() {
         return fullName;
