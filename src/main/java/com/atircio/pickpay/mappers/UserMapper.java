@@ -45,7 +45,7 @@ public class UserMapper {
                 .map(transactions -> transactions.stream()
                         .map(transactionMapper::transactionToTransactionForUsersDto)
                         .toList())
-                .orElse(List.of())); // Return an empty list if null
+                .orElse(List.of()));
 
 
         dto.setSentTransactions(entity.getSentTransactions() != null

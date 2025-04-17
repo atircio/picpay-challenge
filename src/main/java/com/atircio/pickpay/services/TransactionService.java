@@ -14,7 +14,6 @@ import com.atircio.pickpay.repositories.TransactionRepository;
 import com.atircio.pickpay.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -37,7 +36,7 @@ public class TransactionService {
         this.transactionMapper = transactionMapper;
         this.userRepository = userRepository;
         this.transactionAuthorizationService = transactionAuthorizationService;
-        this.notificationService = notificationService;
+       this.notificationService = notificationService;
     }
 
 
@@ -62,7 +61,6 @@ public class TransactionService {
             throw new InsufficientBalanceException("Not enough balance for this transaction.");
         }
 
-        // Call External Authorization Service (Ensure the transaction is allowed)
         boolean isAuthorized =  transactionAuthorizationService.verifyTransaction().data().authorization();
         if (!isAuthorized) {
             throw new UnauthorizedTransactionException("Transaction was not authorized. Try again later");
