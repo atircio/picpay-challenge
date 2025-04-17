@@ -1,8 +1,6 @@
 package com.atircio.pickpay.dtos;
 
-import com.atircio.pickpay.entities.Transaction;
 import com.atircio.pickpay.entities.enums.UserType;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,6 +20,20 @@ public class UserDtoResponse {
     private List<TransactionForUsersDto> SentTransactions = new ArrayList<>();
 
     private List<TransactionForUsersDto> ReceivedTransactions = new ArrayList<>();
+
+
+    public UserDtoResponse() {
+    }
+
+    public UserDtoResponse(String fullName, String cpf, String email, BigDecimal balance, UserType userType, List<TransactionForUsersDto> sentTransactions, List<TransactionForUsersDto> receivedTransactions) {
+        this.fullName = fullName;
+        this.cpf = cpf;
+        this.email = email;
+        this.balance = balance;
+        this.userType = userType;
+        SentTransactions = sentTransactions;
+        ReceivedTransactions = receivedTransactions;
+    }
 
     public String getFullName() {
         return fullName;
