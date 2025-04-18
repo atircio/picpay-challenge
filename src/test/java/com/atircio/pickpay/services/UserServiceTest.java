@@ -20,8 +20,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -151,4 +152,49 @@ public class UserServiceTest {
 
 
     }
+
+    @Test
+    void shouldReturnUserDtoResponse_whenUserIsFoundByCpf(){
+        //Given
+        String cpf = "2323232323232";
+
+        User user = new User(
+                "John Smith",
+                "2323232323232",
+                "john1244@gmail.com",
+                "Pass1234",
+                new BigDecimal("233434"),
+                UserType.COMMON,
+                List.of(new Transaction()),
+                List.of(new Transaction())
+        );
+
+        UserDtoResponse dto = new UserDtoResponse(
+                "John Smith",
+                "2323232323232",
+                "john1244@gmail.com",
+                new BigDecimal("233434"),
+                UserType.COMMON,
+                List.of(new TransactionForUsersDto(new BigDecimal(200), "3524242342", TransactionStatus.APPROVED,  LocalDateTime.now())),
+                List.of(new TransactionForUsersDto(new BigDecimal(200), "3524242342", TransactionStatus.APPROVED,  LocalDateTime.now()))
+        );
+
+
+        //Mock calls
+        when(userRepository.findByCPF(cpf)).thenReturn(Optional.of(user));
+        when(userMapper.userToUserDtoResponse(user)).thenReturn(dto);
+
+        //When
+        UserDtoResponse response = userService.findUserByCpf(cpf);
+
+        //Then
+        assertNotNull(response);
+        assertEquals(cpf, response.getCPF());
+        assertEquals(user.getFullName(), response.getFullName());
+        verify(userRepository, times(1)).findByCPF(cpf);
+        verify(userMapper, times(1)).userToUserDtoResponse(user);
+
+    }
+
+
 }
