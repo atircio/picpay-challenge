@@ -9,6 +9,7 @@ import com.atircio.pickpay.entities.enums.TransactionStatus;
 import com.atircio.pickpay.entities.enums.UserType;
 import com.atircio.pickpay.mappers.UserMapper;
 import com.atircio.pickpay.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -194,6 +195,22 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findByCPF(cpf);
         verify(userMapper, times(1)).userToUserDtoResponse(user);
 
+    }
+
+    @Test
+    void shouldThrowAnException_whenUserNotFoundedByCpf(){
+        //Given
+        String cpf = "345678977287";
+        //Mock calls
+        when(userRepository.findByCPF(cpf)).thenReturn(Optional.empty());
+
+        //When
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> userService.findUserByCpf(cpf));
+
+        //Then
+        assertEquals("User not found with CPF: " + cpf, exception.getMessage());
+        verify(userRepository, times(1)).findByCPF(cpf);
+        verify(userMapper, never()).userToUserDtoResponse(any(User.class));
     }
 
 
