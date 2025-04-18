@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -104,6 +105,50 @@ public class UserServiceTest {
         verify(userMapper, times(1)).userDtoToUser(dto);
         verify(userRepository, times(1)).save(user);
         verify(userMapper, times(1)).userToUserDtoResponse(savedUser);
+
+    }
+
+    @Test
+    void should_return_a_list_of_users(){
+        //Given
+        List<User> data = new ArrayList<>();
+        data.add(new User(
+                "John Smith",
+                "2323232323232",
+                "john1244@gmail.com",
+                "Pass1234",
+                new BigDecimal("233434"),
+                UserType.COMMON,
+                List.of(new Transaction()),
+                List.of(new Transaction())));
+
+        List<UserDtoResponse> dataDto = new ArrayList<>();
+        dataDto.add(new UserDtoResponse(
+                "John Smith",
+                "2323232323232",
+                "john1244@gmail.com",
+                new BigDecimal("233434"),
+                UserType.COMMON,
+                List.of(new TransactionForUsersDto(new BigDecimal(100), "23224435535", TransactionStatus.APPROVED, LocalDateTime.now())),
+                List.of(new TransactionForUsersDto(new BigDecimal(100), "23224435535", TransactionStatus.APPROVED, LocalDateTime.now()))));
+
+        //Mock Calls
+
+        when(userRepository.findAll()).thenReturn(data);
+        when(userMapper.userToUserDtoResponse(data)).thenReturn(dataDto);
+
+        //When
+
+        List<UserDtoResponse> responses = userService.findAllUsers();
+
+        //Then
+
+        assertEquals(data.size(), responses.size());
+        verify(userRepository, times(1)).findAll();
+        verify(userMapper, times(1)).userToUserDtoResponse(data);
+
+
+
 
     }
 }
