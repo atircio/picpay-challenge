@@ -213,5 +213,51 @@ public class UserServiceTest {
         verify(userMapper, never()).userToUserDtoResponse(any(User.class));
     }
 
+    @Test
+    void shouldReturnUserDtoResponse_whenUserFoundByEmail(){
+        //Given
+        String email = "john1244@gmail.com";
+
+        User user = new User();
+        user.setEmail(email);
+
+        UserDtoResponse dto = new UserDtoResponse();
+        dto.setEmail(email);
+
+        //Mock Calls
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(userMapper.userToUserDtoResponse(user)).thenReturn(dto);
+
+        //When
+
+        UserDtoResponse response = userService.findUserByEmail(email);
+
+        //Then
+
+        assertNotNull(response);
+        assertEquals(user.getEmail(), response.getEmail());
+
+        verify(userRepository, times(1)).findByEmail(email);
+        verify(userMapper, times(1)).userToUserDtoResponse(user);
+    }
+
+    @Test
+    void shouldTrowAnException_whenUserNotFoundByEmail(){
+        //Given
+        String email = "random@something.com";
+
+        //Mock calls
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        //When
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> userService.findUserByEmail(email));
+
+        //Then
+        assertEquals("User not found with email: " + email, exception.getMessage());
+        verify(userRepository, times(1)).findByEmail(email);
+        verify(userMapper, never()).userToUserDtoResponse(any(User.class));
+
+    }
+
 
 }
