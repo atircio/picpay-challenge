@@ -41,55 +41,79 @@ public class TransactionService {
 
 
 
+
     @Transactional
     public TransactionDto sendMoney(TransferMoneyRequestDto requestDto, String senderCpf) {
+        validateRequest(requestDto, senderCpf);
 
-        if(requestDto.cpfDestination().equals(senderCpf)){
+        User sender = findUserOrThrow(senderCpf, "Sender");
+        User receiver = findUserOrThrow(requestDto.cpfDestination(), "Receiver");
+
+        validateBusinessRules(sender, requestDto);
+
+        authorizeTransaction();
+
+        Transaction transaction = createTransaction(sender, receiver, requestDto.amount());
+
+        try {
+            processTransaction(transaction, sender, receiver, requestDto.amount());
+            return transactionMapper.transactionToTransactionDto(transaction);
+        } catch (Exception e) {
+            handleTransactionFailure(transaction, e);
+            throw new TransactionFailedException("Transaction failed due to an internal error: " + e.getMessage());
+        }
+    }
+
+    private void validateRequest(TransferMoneyRequestDto requestDto, String senderCpf) {
+        if (requestDto.cpfDestination().equals(senderCpf)) {
             throw new UnauthorizedTransactionException("The sender and receiver cannot have the same cpf");
         }
+    }
 
-        User sender = userRepository.findByCPF(senderCpf).orElseThrow(
-                () -> new EntityNotFoundException("Sender user not found with CPF: " + senderCpf));
+    private User findUserOrThrow(String cpf, String userRole) {
+        return userRepository.findByCPF(cpf).orElseThrow(
+                () -> new EntityNotFoundException(userRole + " user not found with CPF: " + cpf));
+    }
 
-        if(sender.getUserType().equals(UserType.MERCHANT))
+    private void validateBusinessRules(User sender, TransferMoneyRequestDto requestDto) {
+        if (sender.getUserType().equals(UserType.MERCHANT)) {
             throw new IllegalArgumentException("Merchants are not allowed to send money");
-
-        User receiver = userRepository.findByCPF(requestDto.cpfDestination()).orElseThrow(
-                () -> new EntityNotFoundException("Receiver user not found with CPF: " + requestDto.cpfDestination()));
+        }
 
         if (sender.getBalance().compareTo(requestDto.amount()) < 0) {
             throw new InsufficientBalanceException("Not enough balance for this transaction.");
         }
+    }
 
-        boolean isAuthorized =  transactionAuthorizationService.verifyTransaction().data().authorization();
+    private void authorizeTransaction() {
+        boolean isAuthorized = transactionAuthorizationService.verifyTransaction().data().authorization();
         if (!isAuthorized) {
             throw new UnauthorizedTransactionException("Transaction was not authorized. Try again later");
         }
+    }
 
+    private Transaction createTransaction(User sender, User receiver, BigDecimal amount) {
         Transaction transaction = new Transaction();
         transaction.setSender(sender);
         transaction.setReceiver(receiver);
-        transaction.setAmount(requestDto.amount());
+        transaction.setAmount(amount);
         transaction.setStatus(TransactionStatus.PENDING);
+        return transaction;
+    }
 
-        try {
-            withdrawMoney(sender, requestDto.amount());
-            depositMoney(receiver, requestDto.amount());
+    private void processTransaction(Transaction transaction, User sender, User receiver, BigDecimal amount) {
+        withdrawMoney(sender, amount);
+        depositMoney(receiver, amount);
+        transaction.setStatus(TransactionStatus.APPROVED);
+        transactionRepository.save(transaction);
 
-            transaction.setStatus(TransactionStatus.APPROVED);
-            transactionRepository.save(transaction);
+        // Optional: notify users
+        // notificationService.notifyUser(receiver.getEmail(), "You have received a new transaction.");
+    }
 
-            // Notify Users (External Notification Service)
-            //notificationService.notifyUser(receiver.getEmail(), "You have received a new transaction.");
-
-
-
-            return transactionMapper.transactionToTransactionDto(transaction);
-        } catch (Exception e) {
-            transaction.setStatus(TransactionStatus.FAILED);
-            transactionRepository.save(transaction);
-            throw new TransactionFailedException("Transaction failed due to an internal error: " + e.getMessage());
-        }
+    private void handleTransactionFailure(Transaction transaction, Exception e) {
+        transaction.setStatus(TransactionStatus.FAILED);
+        transactionRepository.save(transaction);
     }
 
 
