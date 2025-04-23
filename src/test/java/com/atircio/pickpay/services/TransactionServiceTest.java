@@ -2,10 +2,7 @@ package com.atircio.pickpay.services;
 
 import com.atircio.pickpay.dtos.TransactionDto;
 import com.atircio.pickpay.dtos.UserTransactionInfoResponse;
-import com.atircio.pickpay.entities.Transaction;
-import com.atircio.pickpay.entities.User;
 import com.atircio.pickpay.entities.enums.TransactionStatus;
-import com.atircio.pickpay.entities.enums.UserType;
 import com.atircio.pickpay.mappers.TransactionMapper;
 import com.atircio.pickpay.repositories.TransactionRepository;
 import com.atircio.pickpay.repositories.UserRepository;
@@ -17,9 +14,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 
 public class TransactionServiceTest {

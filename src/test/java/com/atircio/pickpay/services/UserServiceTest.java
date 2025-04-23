@@ -10,12 +10,10 @@ import com.atircio.pickpay.entities.enums.UserType;
 import com.atircio.pickpay.mappers.UserMapper;
 import com.atircio.pickpay.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
