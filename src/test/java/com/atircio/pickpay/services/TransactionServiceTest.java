@@ -5,9 +5,11 @@ import com.atircio.pickpay.entities.Transaction;
 import com.atircio.pickpay.entities.User;
 import com.atircio.pickpay.entities.enums.TransactionStatus;
 import com.atircio.pickpay.entities.enums.UserType;
+import com.atircio.pickpay.exceptions.UnauthorizedTransactionException;
 import com.atircio.pickpay.mappers.TransactionMapper;
 import com.atircio.pickpay.repositories.TransactionRepository;
 import com.atircio.pickpay.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -92,5 +95,38 @@ public class TransactionServiceTest {
         verify(transactionAuthorizationService, times(1)).verifyTransaction();
         verify(transactionRepository, times(1)).save(transaction);
         verify(transactionMapper, times(1)).transactionToTransactionDto(transaction);
+    }
+
+    @Test
+    void shouldThrowAnUnauthorizedTransactionException_whenSenderAndReceiverAreSame(){
+        //Given
+        String senderCpf = "12345678910";
+
+        TransferMoneyRequestDto requestDto = new TransferMoneyRequestDto("12345678910", new BigDecimal(1000));
+
+        //Mock Calls
+        UnauthorizedTransactionException exception = assertThrows(UnauthorizedTransactionException.class,
+                ()-> transactionService.sendMoney(requestDto, senderCpf));
+
+
+        assertEquals("The sender and receiver cannot have the same cpf", exception.getMessage());
+        verify(userRepository, never()).findByCPF(senderCpf);
+        verify(userRepository, never()).findByCPF(requestDto.cpfDestination());
+        verify(transactionAuthorizationService, never()).verifyTransaction();
+
+
+    }
+
+    @Test
+    void shouldThrowAnEntityNotFoundException_whenUserNotFound(){
+        //Given
+        String senderCpf = "12345678910";
+
+        TransferMoneyRequestDto requestDto = new TransferMoneyRequestDto("123223678910", new BigDecimal(1000));
+
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class,
+                () -> transactionService.sendMoney(requestDto, senderCpf));
+
+        verify(transactionAuthorizationService, never()).verifyTransaction();
     }
 }

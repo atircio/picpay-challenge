@@ -117,10 +117,10 @@ public class TransactionService {
     }
 
 
-    public void depositMoney(User user, BigDecimal amount) {
+    private void depositMoney(User user, BigDecimal amount) {
         user.setBalance(user.getBalance().add(amount));
     }
-    public void withdrawMoney(User user, BigDecimal amount) {
+    private void withdrawMoney(User user, BigDecimal amount) {
         user.setBalance(user.getBalance().subtract(amount));
     }
 
