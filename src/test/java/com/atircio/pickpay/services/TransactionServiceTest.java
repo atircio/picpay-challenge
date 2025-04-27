@@ -5,6 +5,7 @@ import com.atircio.pickpay.entities.Transaction;
 import com.atircio.pickpay.entities.User;
 import com.atircio.pickpay.entities.enums.TransactionStatus;
 import com.atircio.pickpay.entities.enums.UserType;
+import com.atircio.pickpay.exceptions.InsufficientBalanceException;
 import com.atircio.pickpay.exceptions.UnauthorizedTransactionException;
 import com.atircio.pickpay.mappers.TransactionMapper;
 import com.atircio.pickpay.repositories.TransactionRepository;
@@ -12,12 +13,12 @@ import com.atircio.pickpay.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
+@ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
 
     @InjectMocks
@@ -43,7 +44,7 @@ public class TransactionServiceTest {
 
     @BeforeEach
     void setUp(){
-        MockitoAnnotations.openMocks(this);
+
     }
 
     @Test
@@ -129,4 +130,73 @@ public class TransactionServiceTest {
 
         verify(transactionAuthorizationService, never()).verifyTransaction();
     }
+
+    @Test
+    void shouldThrowAnIllegalArgumentException_whenSenderIsMarchant(){
+        //Given
+        String senderCpf = "12345678910";
+        String receiverCpf = "43434343433";
+        TransferMoneyRequestDto requestDto = new TransferMoneyRequestDto("43434343433", new BigDecimal(1000));
+
+        User sender = new User("Sender", senderCpf, "sender@email.com", "pass", new BigDecimal("50"), UserType.MERCHANT, new ArrayList<>(), new ArrayList<>());
+        User receiver = new User("Receiver", receiverCpf, "receiver@email.com", "pass", new BigDecimal("50"), UserType.COMMON, new ArrayList<>(), new ArrayList<>());
+
+        //Mock calls
+
+        when(userRepository.findByCPF(senderCpf)).thenReturn(Optional.of(sender));
+        when(userRepository.findByCPF(receiverCpf)).thenReturn(Optional.of(receiver));
+
+        //When
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> transactionService.sendMoney(requestDto, senderCpf));
+
+
+
+
+    }
+
+    @Test
+    void shouldThrowAnInsufficientBalanceException_whenSenderDoNotHaveEnoughMoney(){
+        //Given
+        String senderCpf = "12345678910";
+
+        User sender = new User("Sender", senderCpf, "sender@email.com", "pass", new BigDecimal(1), UserType.COMMON, new ArrayList<>(), new ArrayList<>());
+        User receiver = new User("Receiver", "12345654334", "receiver@email.com", "pass", new BigDecimal(50), UserType.MERCHANT, new ArrayList<>(), new ArrayList<>());
+
+        TransferMoneyRequestDto requestDto = new TransferMoneyRequestDto(receiver.getCPF(),new BigDecimal(100));
+
+        //Mock calls
+        when(userRepository.findByCPF(senderCpf)).thenReturn(Optional.of(sender));
+        when(userRepository.findByCPF(receiver.getCPF())).thenReturn(Optional.of(receiver));
+
+        //When
+        InsufficientBalanceException exception = assertThrows(InsufficientBalanceException.class,
+                () -> transactionService.sendMoney(requestDto, senderCpf));
+
+
+    }
+
+    @Test
+    void shouldThrowAnUnauthorizedTransactionException_whenTransactionWasNotAuthorized() {
+        //Given
+        String senderCpf = "12345678910";
+        User sender = new User("Sender", senderCpf, "sender@email.com", "pass", new BigDecimal(10000), UserType.COMMON, new ArrayList<>(), new ArrayList<>());
+        User receiver = new User("Receiver", "12345654334", "receiver@email.com", "pass", new BigDecimal(50), UserType.MERCHANT, new ArrayList<>(), new ArrayList<>());
+
+        TransferMoneyRequestDto requestDto = new TransferMoneyRequestDto(receiver.getCPF(), new BigDecimal(100));
+
+        //Mock calls
+        when(userRepository.findByCPF(senderCpf)).thenReturn(Optional.of(sender));
+        when(userRepository.findByCPF((receiver.getCPF()))).thenReturn(Optional.of(receiver));
+        when(transactionAuthorizationService.verifyTransaction()).thenReturn(
+                new AuthorizationResponse("failed", new AuthorizationData(false))
+        );
+
+        //When
+        UnauthorizedTransactionException exception = assertThrows(UnauthorizedTransactionException.class,
+                () -> transactionService.sendMoney(requestDto, senderCpf));
+
+    }
+
 }
