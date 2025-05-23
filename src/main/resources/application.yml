@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/picpay  # PostgreSQL database connection URL
-    username: postgres  # Database username
-    password: atircio  # Database password (Avoid storing plaintext passwords in production!)
+    username: ...  # Database username
+    password: ....  # Database password (Avoid storing plaintext passwords in production!)
     driver-class-name: org.postgresql.Driver  # JDBC driver for PostgreSQL
 
   jpa:
