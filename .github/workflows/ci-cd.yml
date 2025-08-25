@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean install
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-app:latest .
